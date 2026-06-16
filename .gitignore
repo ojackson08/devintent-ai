@@ -1,0 +1,33 @@
+# Environment & secrets — NEVER commit these
+.env
+.env.*
+!.env.example
+
+# Python virtual environment
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Data & output files (contain real lead data — keep local)
+data/*.db
+data/*.csv
+data/*.sqlite
+logs/*.log
+
+# Backup and temp files
+*.bak
+*.tmp
+*.backup
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp

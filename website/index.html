@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevIntent AI — GitHub Intent Data, Delivered</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #010102;
+  --bg-panel: #0a0b0d;
+  --bg-surface: #111214;
+  --bg-elevated: #191a1b;
+  --text-primary: #f7f8f8;
+  --text-secondary: #d0d6e0;
+  --text-muted: #8a8f98;
+  --text-dim: #62666d;
+  --accent: #7170ff;
+  --accent-hover: #828fff;
+  --accent-bg: rgba(113,112,255,0.1);
+  --border: rgba(255,255,255,0.06);
+  --border-standard: rgba(255,255,255,0.08);
+  --green: #10b981;
+  --font: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text-primary);
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+::selection { background: rgba(113,112,255,0.3); color: #fff; }
+
+/* ── Navigation ── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 0 32px; height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(1,1,2,0.8);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 16px; font-weight: 600; color: var(--text-primary);
+  text-decoration: none; letter-spacing: -0.02em;
+}
+.nav-logo-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent); box-shadow: 0 0 12px var(--accent);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 12px var(--accent); }
+  50% { opacity: 0.6; box-shadow: 0 0 20px var(--accent); }
+}
+.nav-links { display: flex; align-items: center; gap: 28px; }
+.nav-links a {
+  font-size: 13px; font-weight: 500; color: var(--text-muted);
+  text-decoration: none; transition: color 0.2s; letter-spacing: 0.01em;
+}
+.nav-links a:hover { color: var(--text-primary); }
+.nav-cta {
+  font-size: 13px; font-weight: 500; color: #fff;
+  background: var(--accent); border: none; border-radius: 6px;
+  padding: 7px 16px; cursor: pointer; text-decoration: none;
+  transition: background 0.2s, transform 0.1s;
+}
+.nav-cta:hover { background: var(--accent-hover); transform: translateY(-1px); }
+
+/* ── Hero ── */
+.hero {
+  min-height: 100vh; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center;
+  padding: 120px 24px 80px; position: relative; overflow: hidden;
+}
+.hero-glow {
+  position: absolute; top: 20%; left: 50%; transform: translateX(-50%);
+  width: 800px; height: 600px; border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(113,112,255,0.08) 0%, transparent 70%);
+  pointer-events: none; filter: blur(60px);
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 500; color: var(--accent);
+  background: var(--accent-bg); border: 1px solid rgba(113,112,255,0.15);
+  border-radius: 999px; padding: 5px 14px; margin-bottom: 32px;
+  letter-spacing: 0.02em;
+}
+.hero-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.hero h1 {
+  font-size: clamp(40px, 6vw, 72px); font-weight: 500;
+  line-height: 1.05; letter-spacing: -0.03em; color: var(--text-primary);
+  max-width: 800px; margin-bottom: 24px;
+}
+.hero h1 span { color: var(--accent); }
+.hero p {
+  font-size: clamp(16px, 2vw, 20px); font-weight: 400;
+  color: var(--text-muted); max-width: 560px; line-height: 1.6;
+  margin-bottom: 40px;
+}
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+.btn-primary {
+  font-size: 15px; font-weight: 500; color: #fff;
+  background: var(--accent); border: none; border-radius: 8px;
+  padding: 12px 28px; cursor: pointer; text-decoration: none;
+  transition: background 0.2s, transform 0.1s;
+  box-shadow: 0 0 0 1px rgba(113,112,255,0.3), 0 4px 16px rgba(113,112,255,0.15);
+}
+.btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+.btn-ghost {
+  font-size: 15px; font-weight: 500; color: var(--text-secondary);
+  background: rgba(255,255,255,0.03); border: 1px solid var(--border-standard);
+  border-radius: 8px; padding: 12px 28px; cursor: pointer; text-decoration: none;
+  transition: background 0.2s, border-color 0.2s;
+}
+.btn-ghost:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); }
+
+/* ── Stats bar ── */
+.stats {
+  display: flex; justify-content: center; gap: 48px;
+  padding: 40px 24px; border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-panel);
+}
+.stat { text-align: center; }
+.stat-value {
+  font-size: 28px; font-weight: 600; color: var(--text-primary);
+  font-variant-numeric: tabular-nums; letter-spacing: -0.02em;
+}
+.stat-label { font-size: 12px; color: var(--text-dim); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+/* ── Section base ── */
+.section {
+  padding: 100px 24px; max-width: 1100px; margin: 0 auto;
+}
+.section-label {
+  font-size: 12px; font-weight: 500; color: var(--accent);
+  text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;
+}
+.section h2 {
+  font-size: clamp(28px, 4vw, 44px); font-weight: 500;
+  line-height: 1.1; letter-spacing: -0.025em; color: var(--text-primary);
+  margin-bottom: 20px;
+}
+.section-desc {
+  font-size: 17px; color: var(--text-muted); max-width: 540px; line-height: 1.65;
+  margin-bottom: 56px;
+}
+
+/* ── How it works ── */
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.step {
+  background: var(--bg-surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 32px; position: relative;
+  transition: border-color 0.3s, transform 0.3s;
+}
+.step:hover { border-color: var(--border-standard); transform: translateY(-2px); }
+.step-num {
+  font-family: var(--mono); font-size: 12px; color: var(--accent);
+  margin-bottom: 20px; letter-spacing: 0.05em;
+}
+.step h3 { font-size: 18px; font-weight: 500; color: var(--text-primary); margin-bottom: 8px; }
+.step p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+
+/* ── Live feed ── */
+.feed { display: flex; flex-direction: column; gap: 8px; }
+.feed-header {
+  display: grid; grid-template-columns: 200px 1fr 120px 80px 100px;
+  font-size: 11px; font-weight: 500; color: var(--text-dim);
+  text-transform: uppercase; letter-spacing: 0.06em; padding: 0 16px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.feed-row {
+  display: grid; grid-template-columns: 200px 1fr 120px 80px 100px;
+  align-items: center; padding: 12px 16px; border-radius: 8px;
+  font-size: 14px; transition: background 0.2s;
+  border-bottom: 1px solid rgba(255,255,255,0.02);
+}
+.feed-row:hover { background: rgba(255,255,255,0.02); }
+.feed-user { font-weight: 500; color: var(--text-primary); font-family: var(--mono); font-size: 13px; }
+.feed-repo { color: var(--text-muted); font-family: var(--mono); font-size: 12px; }
+.feed-company { color: var(--text-secondary); font-size: 13px; }
+.feed-score {
+  font-family: var(--mono); font-weight: 500; font-size: 13px;
+  text-align: center; border-radius: 4px; padding: 2px 8px;
+}
+.feed-score.high { color: var(--green); background: rgba(16,185,129,0.1); }
+.feed-score.mid { color: var(--accent); background: rgba(113,112,255,0.1); }
+.feed-cat { font-size: 11px; color: var(--text-dim); text-align: right; }
+
+/* ── Pricing ── */
+.pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.price-card {
+  background: var(--bg-surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 36px 28px; position: relative;
+  transition: border-color 0.3s, transform 0.3s;
+}
+.price-card:hover { border-color: var(--border-standard); transform: translateY(-2px); }
+.price-card.featured {
+  border-color: rgba(113,112,255,0.3);
+  background: linear-gradient(180deg, rgba(113,112,255,0.04) 0%, var(--bg-surface) 100%);
+}
+.price-card.featured::before {
+  content: 'Most Popular'; position: absolute; top: -11px; left: 50%;
+  transform: translateX(-50%); font-size: 11px; font-weight: 500;
+  color: var(--accent); background: var(--bg); border: 1px solid rgba(113,112,255,0.2);
+  border-radius: 999px; padding: 3px 12px;
+}
+.price-tier { font-size: 13px; font-weight: 500; color: var(--text-muted); margin-bottom: 12px; }
+.price-amount { font-size: 42px; font-weight: 600; color: var(--text-primary); letter-spacing: -0.03em; }
+.price-amount span { font-size: 14px; font-weight: 400; color: var(--text-dim); }
+.price-desc { font-size: 14px; color: var(--text-muted); margin: 16px 0 28px; line-height: 1.5; }
+.price-features { list-style: none; margin-bottom: 32px; }
+.price-features li {
+  font-size: 13px; color: var(--text-secondary); padding: 6px 0;
+  display: flex; align-items: center; gap: 10px;
+}
+.price-features li::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+.price-btn {
+  display: block; width: 100%; text-align: center; font-size: 14px;
+  font-weight: 500; padding: 10px; border-radius: 8px;
+  text-decoration: none; transition: all 0.2s; cursor: pointer; border: none;
+}
+.price-btn.primary { background: var(--accent); color: #fff; }
+.price-btn.primary:hover { background: var(--accent-hover); }
+.price-btn.ghost { background: transparent; color: var(--text-secondary); border: 1px solid var(--border-standard); }
+.price-btn.ghost:hover { background: rgba(255,255,255,0.04); }
+
+/* ── Social proof ── */
+.logos {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 40px;
+  padding: 60px 24px; opacity: 0.35; filter: grayscale(1);
+}
+.logo { font-size: 18px; font-weight: 600; color: var(--text-muted); letter-spacing: -0.01em; }
+
+/* ── CTA section ── */
+.cta-section {
+  text-align: center; padding: 120px 24px;
+  background: linear-gradient(180deg, transparent 0%, rgba(113,112,255,0.03) 100%);
+  border-top: 1px solid var(--border);
+}
+.cta-section h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 500; letter-spacing: -0.025em; margin-bottom: 16px; }
+.cta-section p { font-size: 17px; color: var(--text-muted); margin-bottom: 40px; }
+
+/* ── Footer ── */
+.footer {
+  padding: 40px 24px; border-top: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 12px; color: var(--text-dim);
+}
+.footer a { color: var(--text-dim); text-decoration: none; transition: color 0.2s; }
+.footer a:hover { color: var(--text-muted); }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .steps { grid-template-columns: 1fr; }
+  .pricing-grid { grid-template-columns: 1fr; }
+  .stats { flex-direction: column; gap: 24px; }
+  .feed-header, .feed-row { grid-template-columns: 1fr 1fr; font-size: 12px; }
+  .feed-header > *:nth-child(3), .feed-header > *:nth-child(4), .feed-header > *:nth-child(5),
+  .feed-row > *:nth-child(3), .feed-row > *:nth-child(4), .feed-row > *:nth-child(5) { display: none; }
+  .hero h1 { font-size: 36px; }
+  .section { padding: 60px 20px; }
+  .footer { flex-direction: column; gap: 12px; text-align: center; }
+}
+
+/* ── Scroll reveal ── */
+.reveal {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav">
+  <a href="#" class="nav-logo">
+    <span class="nav-logo-dot"></span>
+    DevIntent AI
+  </a>
+  <div class="nav-links">
+    <a href="#how">How it works</a>
+    <a href="#leads">Live leads</a>
+    <a href="#pricing">Pricing</a>
+  </div>
+  <a href="mailto:ojackson08@gmail.com" class="nav-cta">Contact</a>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-badge"><span class="hero-badge-dot"></span> Now monitoring 15+ GitHub repos</div>
+  <h1>Your next customer is <span>researching you</span> on GitHub right now</h1>
+  <p>DevIntent AI monitors GitHub for buyer intent signals — stars, forks, and contributions to AI tool repos — and delivers enriched, scored leads to your CRM every morning.</p>
+  <div class="hero-actions">
+    <a href="mailto:ojackson08@gmail.com" class="btn-primary">Email us</a>
+    <a href="tel:7063737141" class="btn-ghost">Call us</a>
+  </div>
+</section>
+
+<!-- Stats -->
+<div class="stats">
+  <div class="stat"><div class="stat-value" id="stat-signals">0</div><div class="stat-label">Signals ingested</div></div>
+  <div class="stat"><div class="stat-value" id="stat-leads">0</div><div class="stat-label">Leads scored</div></div>
+  <div class="stat"><div class="stat-value">8</div><div class="stat-label">Repos monitored</div></div>
+  <div class="stat"><div class="stat-value">5</div><div class="stat-label">Intent categories</div></div>
+</div>
+
+<!-- How it works -->
+<section class="section reveal" id="how">
+  <div class="section-label">How it works</div>
+  <h2>From GitHub activity to qualified pipeline</h2>
+  <p class="section-desc">Three automated steps turn public GitHub signals into warm, enriched leads — no manual prospecting required.</p>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01 — INGEST</div>
+      <h3>Watch GitHub in real time</h3>
+      <p>We monitor target repos for stars, forks, and watches. Every event is captured, deduplicated, and stored for analysis.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">02 — CLASSIFY</div>
+      <h3>AI scores buyer intent</h3>
+      <p>Each signal is classified by AI into one of 5 buyer intent categories, then enriched with name, company, and email from GitHub profiles.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">03 — DELIVER</div>
+      <h3>Fresh leads every morning</h3>
+      <p>High-scoring leads are pushed to your CRM or delivered as a daily CSV. Each lead includes an outreach reason so your SDRs can start conversations immediately.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Live lead feed -->
+<section class="section reveal" id="leads">
+  <div class="section-label">Live lead feed</div>
+  <h2>Real leads, updated every 6 hours</h2>
+  <p class="section-desc">These developers starred or forked AI tool repos in the past 48 hours. Each one is a potential customer actively researching your product category.</p>
+  <div class="feed" id="feed">
+    <div class="feed-header">
+      <span>User</span><span>Repository</span><span>Company</span><span>Score</span><span>Category</span>
+    </div>
+    <!-- Populated by JS -->
+  </div>
+</section>
+
+<!-- Pricing -->
+<section class="section reveal" id="pricing">
+  <div class="section-label">Pricing</div>
+  <h2>Intent data, priced for outcomes</h2>
+  <p class="section-desc">No setup fees, no minimum commitment. Start with a 7-day free trial on any plan.</p>
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="price-tier">Starter</div>
+      <div class="price-amount">$299<span>/mo</span></div>
+      <p class="price-desc">For small teams getting started with intent-based outreach.</p>
+      <ul class="price-features">
+        <li>50 leads per month</li>
+        <li>1 intent category</li>
+        <li>Daily CSV delivery</li>
+        <li>Email support</li>
+      </ul>
+      <a href="#" class="price-btn ghost">Start free trial</a>
+    </div>
+    <div class="price-card featured">
+      <div class="price-tier">Pro</div>
+      <div class="price-amount">$799<span>/mo</span></div>
+      <p class="price-desc">For growing teams that need full coverage and CRM sync.</p>
+      <ul class="price-features">
+        <li>200 leads per month</li>
+        <li>All 5 intent categories</li>
+        <li>HubSpot or Salesforce sync</li>
+        <li>Slack alerts for hot leads</li>
+        <li>Priority support</li>
+      </ul>
+      <a href="#" class="price-btn primary">Start free trial</a>
+    </div>
+    <div class="price-card">
+      <div class="price-tier">Enterprise</div>
+      <div class="price-amount">$2,499<span>/mo</span></div>
+      <p class="price-desc">For teams that need unlimited scale and custom integrations.</p>
+      <ul class="price-features">
+        <li>Unlimited leads</li>
+        <li>Custom ICP scoring</li>
+        <li>API access + webhooks</li>
+        <li>Dedicated account manager</li>
+        <li>Custom integrations</li>
+      </ul>
+      <a href="#" class="price-btn ghost">Contact sales</a>
+    </div>
+  </div>
+</section>
+
+<!-- ROI -->
+<section class="section reveal" id="roi">
+  <div class="section-label">ROI</div>
+  <h2>See the return on intent data</h2>
+  <p class="section-desc">Companies using DevIntent AI typically see 5-10x ROI within the first month by converting warm GitHub signals into demos.</p>
+  <div class="stats" style="justify-content: center; gap: 32px;">
+    <div class="stat"><div class="stat-value">5-10x</div><div class="stat-label">Average ROI</div></div>
+    <div class="stat"><div class="stat-value">24h</div><div class="stat-label">First lead report</div></div>
+    <div class="stat"><div class="stat-value">70%</div><div class="stat-label">Lead-to-demo rate</div></div>
+  </div>
+</section>
+<!-- Social proof -->
+<div class="logos reveal">
+  <span class="logo">Cursor</span>
+  <span class="logo">Devin</span>
+  <span class="logo">LangChain</span>
+  <span class="logo">Supabase</span>
+  <span class="logo">PostHog</span>
+  <span class="logo">n8n</span>
+  <span class="logo">Ollama</span>
+  <span class="logo">Dify</span>
+</div>
+
+<!-- CTA -->
+<section class="cta-section reveal">
+  <h2>Your buyers are on GitHub.<br>Go find them.</h2>
+  <p>7-day free trial. No credit card required. First lead report in 24 hours.</p>
+  <a href="#" class="btn-primary">Start your free trial</a>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <span>&copy; 2026 DevIntent AI. All rights reserved.</span>
+  <span><a href="#">Privacy</a> &middot; <a href="#">Terms</a> &middot; <a href="#">Contact</a></span>
+</footer>
+
+<script>
+// ── Lead data (populated from pipeline) ──
+const leads = [
+  {user:'alissonsleal',name:'Alisson Leal',company:'@brapi-dev',score:94,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'jerodg',name:'JerodG',company:'MhiSoft',score:94,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'RotaruAndrei1998',name:'Andrei Rotaru',company:'@WEB-OPS-DEV',score:94,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'andrew-hu368',name:'Andrew Hu',company:'TrustLayer',score:94,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'devanandb',name:'devanand',company:'Pixelesq',score:94,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'sairahul',name:'sairahul',company:'—',score:90,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'capitaletech',name:'Youssef',company:'—',score:90,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'ameno-',name:'Ameno',company:'—',score:90,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'laubsauger',name:'laubsauger',company:'—',score:90,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'engelkes-finstreet',name:'Patrick Engelkes',company:'@finstreet',score:86,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'butcherZ',name:'Ziyi',company:'@strapi',score:86,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'surajmandalcell',name:'Suraj Mandal',company:'Lambton College',score:86,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'alexneri',name:'AV Neri',company:'@Backbase',score:86,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'steviecs',name:'Stevie Sullivan',company:'SkySlope',score:86,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'leighton-tidwell',name:'Leighton Tidwell',company:'Future',score:86,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'GucciGross',name:'Gucci',company:'WandGx',score:86,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'Jawny',name:'Johnny Liao',company:'NVIDIA',score:86,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'magnussinger',name:'Magnus Singer',company:'@SoftstormAI',score:86,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'raymondhechen',name:'Raymond Chen',company:'@msgtomo',score:86,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'foresthpark',name:'Forest Park',company:'—',score:66,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'MarcosHelbert',name:'Marcos Helbert',company:'—',score:66,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'victory-sokolov',name:'Viktor Sokolov',company:'—',score:66,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'carlosveloso',name:'Carlos Veloso',company:'—',score:66,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'mativiaggio',name:'Matias Viaggio',company:'—',score:66,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'itstonywu',name:'Tony Wu',company:'—',score:66,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'aryaminus',name:'sunim',company:'—',score:66,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'Vent3st',name:'XtianC',company:'—',score:66,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'thatsimo',name:'Simone',company:'—',score:66,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'symphonyNineth',name:'Hayk',company:'—',score:74,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'cooperlang',name:'cooperlang',company:'—',score:66,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'boroe0208',name:'Edward Boronka',company:'—',score:74,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'v4iv',name:'Vaibhav Sharma',company:'—',score:74,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'SerifYilmaz',name:'Şerif Yılmaz',company:'—',score:74,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'aviraltiwari',name:'Nero',company:'—',score:74,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'Jefferderp',name:'Jefferderp',company:'—',score:74,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'burakozkirdeniz',name:'Burak Özkırdeniz',company:'—',score:74,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'TheKevinWang',name:'TheKevinWang',company:'—',score:82,cat:'AI Coding Agent',repo:'system-prompts'},
+  {user:'arthurbm',name:'Arthur Brito Medeiros',company:'—',score:82,cat:'AI Coding Agent',repo:'system-prompts'},
+];
+
+// Render feed
+const feed = document.getElementById('feed');
+leads.slice(0, 20).forEach(l => {
+  const scoreClass = l.score >= 80 ? 'high' : l.score >= 60 ? 'mid' : '';
+  feed.innerHTML += `
+    <div class="feed-row">
+      <span class="feed-user">@${l.user}</span>
+      <span class="feed-repo">${l.repo}</span>
+      <span class="feed-company">${l.company}</span>
+      <span class="feed-score ${scoreClass}">${l.score}</span>
+      <span class="feed-cat">${l.cat}</span>
+    </div>`;
+});
+
+// Animate stats
+function animate(el, target) {
+  let current = 0;
+  const step = Math.ceil(target / 40);
+  const timer = setInterval(() => {
+    current += step;
+    if (current >= target) { current = target; clearInterval(timer); }
+    el.textContent = current.toLocaleString();
+  }, 20);
+}
+animate(document.getElementById('stat-signals'), 79689);
+animate(document.getElementById('stat-leads'), 56);
+
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
